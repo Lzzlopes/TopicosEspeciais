@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro</title>
+</head>
+<body>
+<h1>Cadastro</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Usuário" required>
+        <br>
+        <input type="email" name="email" placeholder="E-mail" required>
+        <br>
+        <input type="password" name="senha" placeholder="Senha" required>
+        <br>
+        <input type="submit" value="Cadastrar">
+    </form>
+    <a href="{% url 'login' %}">Já tem uma conta? Faça login</a>
+</body>
+</html>

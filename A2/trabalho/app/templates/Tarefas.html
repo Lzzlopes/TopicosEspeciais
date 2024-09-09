@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{user.username}}</title>
+</head>
+<body>
+    <h1>Tarefas de {{ user.username }}</h1>
+    <a href="{% url 'logout' %}">Logout</a>
+
+    <h2>Criar Tarefa</h2>
+    <form method="POST" action="{% url 'create_task' user.id %}">
+        {% csrf_token %}
+        {{ create_form.as_p }}
+        <input type="submit" value="Criar Tarefa">
+    </form>
+
+    <h2>Tarefas</h2>
+    <ul>
+        {% for tarefa in tarefas %}
+        <li>
+            {{ tarefa.titulo }} - {{ tarefa.status }} - Responsável:
+            {% if tarefa.responsável %}
+            {{ tarefa.responsável.username }}
+            {% else %}
+            N/A
+            {% endif %}
+            <a href="{% url 'edit_task' user.id tarefa.id_Tarefa %}">Editar</a>
+            <a href="{% url 'delete_task' user.id tarefa.id_Tarefa %}" onclick="return confirm('Tem certeza?');">Excluir</a>
+        </li>
+        {% empty %}
+        <li>Nenhuma tarefa encontrada.</li>
+        {% endfor %}
+    </ul>
+
+    <form method="GET">
+        <select name="status">
+            <option value="">Todos</option>
+            <option value="Pendente" {% if request.GET.status == "Pendente" %}selected{% endif %}>Pendente</option>
+            <option value="Em progresso" {% if request.GET.status == "Em progresso" %}selected{% endif %}>Em progresso</option>
+            <option value="Completado" {% if request.GET.status == "Completado" %}selected{% endif %}>Completado</option>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+</body>
+</html>

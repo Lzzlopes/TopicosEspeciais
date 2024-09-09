@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <a href="{% url 'logout' %}">Logout</a>
+
+    <h2>Tarefas</h2>
+    <ul>
+        {% for tarefa in tarefas %}
+        <li>
+            {{ tarefa.titulo }} - {{ tarefa.status }} - Responsável:
+            {% if tarefa.responsável %}
+            {{ tarefa.responsável.username }}
+            {% else %}
+            N/A
+            {% endif %}
+            <a href="{% url 'edit_task' tarefa.user.id tarefa.id_Tarefa %}">Editar</a>
+            <a href="{% url 'delete_task' tarefa.user.id tarefa.id_Tarefa %}" onclick="return confirm('Tem certeza?');">Excluir</a>
+        </li>
+        {% empty %}
+        <li>Nenhuma tarefa encontrada.</li>
+        {% endfor %}
+    </ul>
+
+    <form method="GET">
+        <select name="status">
+            <option value="">Todos</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Em progresso">Em progresso</option>
+            <option value="Completado">Completado</option>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+
+</body>
+</html>
