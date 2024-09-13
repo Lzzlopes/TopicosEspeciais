@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/styles.css' %}">
+</head>
+
+<body>
+<!-- Formulário de Cadastro -->
+    <form action="{% url 'cadastro' %}" method="POST">
+
+        {% csrf_token %}
+
+        <h2> Cadastro </h2>
+        <input type="text" placeholder="Usuário" name="username" required>
+        <br>
+        <input type="password" placeholder="Senha" name="password" required>
+        <br>
+        <input type="submit" value="Cadastrar">
+    </form>
+
+    <!-- Formulário de Login -->
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+
+        <h2> Login </h2>
+
+        <input type="text" placeholder="Usuário" name="username" required>
+        <br>
+        <input type="password" placeholder="Senha" name="password" required>
+        <br>
+        <input type="submit" value="Entrar">
+    </form>
+
+</body>
+</html>
