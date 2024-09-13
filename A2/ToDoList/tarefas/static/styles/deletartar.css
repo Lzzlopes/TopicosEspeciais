@@ -1,0 +1,60 @@
+/* Reset básico para garantir consistência entre navegadores */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilo geral da página */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Estilo do título */
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Estilo do formulário */
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+}
+
+form button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+form button:hover {
+    background-color: #5a060e;
+}
+
+form a {
+    display: inline-block;
+    background: #45a049;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: 1px solid #45a049;
+}
+
+form a:hover {
+    background-color: #2c6a2e;
+}

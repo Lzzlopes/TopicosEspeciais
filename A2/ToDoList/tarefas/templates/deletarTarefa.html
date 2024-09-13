@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <title>Deletar Tarefa</title>
+  <link rel="stylesheet" href="{% static 'styles/deletartar.css' %}">
+
+</head>
+<body>
+  <h1>Tem certeza que deseja excluir a tarefa: "{{ tarefa.titulo }}"?</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit">Sim, Excluir</button>
+    <a href="{% url 'tarefas' %}">Não, Cancelar</a>
+</form>
+</body>
+</html>

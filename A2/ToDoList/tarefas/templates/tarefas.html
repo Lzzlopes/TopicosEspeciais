@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Gerenciamento de Tarefas</title>
+    <link rel="stylesheet" href="{% static 'styles/stylemain.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Gerenciamento de Tarefas</h1>
+        <nav>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <!-- Filtro de Tarefas por Status -->
+    <div class="filter-section">
+        <form method="GET" action="{% url 'tarefas' %}">
+            <label for="status">Filtrar por status:</label>
+            <select name="status" id="status">
+                <option value="">Todos</option>
+                <option value="pendente">Pendente</option>
+                <option value="em_andamento">Em Andamento</option>
+                <option value="concluida">Concluída</option>
+            </select>
+            <input type="submit" value="Filtrar">
+        </form>
+    </div>
+
+    <!-- Lista de Tarefas -->
+    <div class="task-section">
+        <h2>Minhas Tarefas</h2>
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li class="task-item">
+                <h3>{{ task.titulo }}</h3>
+                <p>{{ task.descricao }}</p>
+                <p>Status: {{ task.get_status_display }}</p>
+                <p>Atribuída a: {{ task.responsavel.username }}</p>
+                <a href="{% url 'editar_tarefa' task.id %}">Editar</a>
+                <a href="{% url 'deletar_tarefa' task.id %}">Excluir</a>
+            </li>
+            {% empty %}
+            <p>Você não possui tarefas no momento.</p>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'criar_tarefa' %}" class="btn">Criar Nova Tarefa</a>
+    </div>
+</body>
+</html>

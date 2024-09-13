@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Editar Tarefa</title>
+    <link rel="stylesheet" href="{% static 'styles/editartar.css' %}">
+
+</head>
+<body>
+    <h1>Editar Tarefa: {{ tarefa.titulo }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar Alterações</button>
+    </form>
+
+    <a href="{% url 'tarefas' %}">Voltar para Lista de Tarefas</a>
+</body>
+</html>

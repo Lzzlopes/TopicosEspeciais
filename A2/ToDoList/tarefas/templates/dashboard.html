@@ -1,0 +1,46 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+    </head>
+    <body>
+        <header>
+            <h1>Dashboard do Grupo</h1>
+            <nav>
+                <a href="{% url 'tarefas' %}">Lista de Tarefas</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </nav>
+        </header>
+
+        <div class="dashboard-section">
+            <h2>Todas as Tarefas do Grupo</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Responsável</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tarefa in tarefas %}
+                <tr>
+                    <td>{{ tarefa.titulo }}</td>
+                    <td>{{ tarefa.descricao }}</td>
+                    <td>{{ tarefa.get_status_display }}</td>
+                    <td>{{ tarefa.responsavel.username }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Nenhuma tarefa no momento.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+    </html>
