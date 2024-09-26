@@ -20,7 +20,7 @@ def cadastro(request):
         if User.objects.filter(username=username).exists():
             return HttpResponse('usuario ja existe')
 
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(username, password)
         user.save()
 
         return redirect('tarefas')

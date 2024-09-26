@@ -1,17 +1,17 @@
 #  Validação de Entradas: Adicionar validação de entradas para garantir que todos os campos, como o ano e o preço, sejam valores válidos.
 #Relatórios: Adicionar a funcionalidade de gerar relatórios em diferentes formatos, como PDF ou HTML, a partir dos
 # dados exportados.
-from numbers import Real
 from pathlib import Path
-import os, sqlite3, shutil, csv
+import os, sqlite3, shutil
 from datetime import datetime
 import pandas as pd
-from sqlalchemy import Integer, String, Float
+import pdfkit as pdf
 
 #caminhos
 db = Path('data')
 bckp = Path('backups')
 exports = Path('exports')
+
 
 #conexão tabela
 
@@ -54,7 +54,7 @@ def backup_tabela():
 
 def limpar_backups():
     os.makedirs(bckp, exist_ok=True)
-    flag = 0
+
     arquivos = [arquivo for arquivo in Path('backups').iterdir() if arquivo.is_file()]
 
     arquivos_ordenados = sorted(arquivos, key=lambda x: x.stat().st_mtime)
@@ -71,7 +71,6 @@ def menu():
         limpar_backups()
         exibir_menu()
         cursor, conn = criar_tabela()
-
 
         opcao = int(input("Digite sua opção: "))
         if opcao == 1:
@@ -97,19 +96,25 @@ def menu():
             if livros:
                 print("lista de livros:")
                 for livro in livros:
-                    print(f"ID: {livro[0]}, titulo: {livro[1]}, Autor: {livro[2]}, ano: {livro[3]}, preco: {livro[4]}")
+                    print(f"ID: {livro[0]}, titulo: {livro[1]}, Autor: {livro[2]}, ano: {livro[3]}, preco: "
+                          f"{livro[4]:.2f}")
+            else:
+                print("Não há nenhum livro cadastrado")
 
         elif opcao == 3:
             #atualizar preço de livro
             backup_tabela()
 
-            idprocurado = int(input("Digite o titulo do livro: "))
+            idprocurado = int(input("Digite o id do livro: "))
             preco = float(input("Digite o novo preco do livro: R$"))
 
             cursor.execute('''
             update livraria
             set preco = ? where id = ?
             ''', (preco, idprocurado))
+
+            if cursor.rowcount == 0:
+                raise ValueError(f"Livro com ID: {idprocurado} não encontrado.")
             conn.commit()
             conn.close()
 
@@ -123,6 +128,9 @@ def menu():
             delete from livraria
             where id = ?
             ''', (livro_procurado,))
+
+            if cursor.rowcount == 0:
+                raise ValueError(f"Livro com ID: {livro_procurado} não encontrado.")
             conn.commit()
 
         elif opcao == 5:
@@ -136,22 +144,26 @@ def menu():
             livros = cursor.fetchall()
 
             if livros:
-                print("lista de livros:")
+                print(f"lista de livros de {nome_autor}:")
                 for livro in livros:
                     print(f"ID: {livro[0]}, titulo: {livro[1]}, Autor: {livro[2]}, ano: {livro[3]}, preco: {livro[4]}")
+            else:
+                print(f"Não há nenhum livro de {nome_autor} cadastrado.")
 
         elif opcao == 6:
             #exportar dados csv
             os.makedirs(exports, exist_ok=True)
             df = pd.read_sql('select * from livraria', con=conn)
             df.to_csv(exports / 'livros_exportados.csv', index=False)
+            df.to_html(exports / 'livros_exportados.html')
+            pdf.from_file(exports / 'livros_exportados.html', exports / 'livros_exportados.pdf')
 
         elif opcao == 7:
             #importar dados csv
             try:
                 nome_arquivo = input("Digite o nome do arquivo: ")
                 df = pd.read_csv(exports / f'{nome_arquivo}.csv')
-                df.to_sql('livraria', conn, if_exists='replace', index=False)
+                df.to_sql('livraria', conn, if_exists='replace', columns=['titulo', 'autor', 'ano_publicacao', 'preco'])
                 print("dados importados com sucesso!")
             except FileNotFoundError:
                 print(f"Erro: o arquivo {nome_arquivo}.csv não foi encontrado.")
