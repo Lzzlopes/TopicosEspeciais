@@ -39,7 +39,7 @@ def login(request):
         else:
             return HttpResponse('Usuário ou senha inválidos.')
 
-    return render(request, 'login.html')
+    return render(request, 'tarefas.html')
 
 
 @login_required(login_url='/auth/login')

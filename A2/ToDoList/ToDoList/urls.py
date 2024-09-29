@@ -12,8 +12,8 @@ urlpatterns = [
     path('tarefas/criar/', views.criar_tarefa, name='criar_tarefa'),  # Criação de tarefas
     path('tarefas/<int:tarefa_id>/editar/', views.editar_tarefa, name='editar_tarefa'),  # Edição de tarefas
     path('tarefas/<int:tarefa_id>/deletar/', views.deletar_tarefa, name='deletar_tarefa'),  # Exclusão de tarefas
-    path('dashboard/', views.dashboard, name='dashboard'),  # Adiciona a URL do dashboard
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # Adicione esta linha
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
 
 ]

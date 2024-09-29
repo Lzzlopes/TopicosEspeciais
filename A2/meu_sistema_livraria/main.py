@@ -26,7 +26,8 @@ def exibir_menu():
     print("6. Exportar dados para CSV")
     print("7. Importar dados de CSV")
     print("8. Fazer backup do banco de dados")
-    print("9. Sair")
+    print("9. Gerar relatório em HTML")
+    print("0. Sair")
 
 
 def criar_tabela():
@@ -129,8 +130,24 @@ def menu():
             where id = ?
             ''', (livro_procurado,))
 
+            cursor.execute('''
+            UPDATE livraria
+            set id = id - 1
+            where id > ?''', (livro_procurado,))
+
             if cursor.rowcount == 0:
                 raise ValueError(f"Livro com ID: {livro_procurado} não encontrado.")
+
+            cursor.execute('''
+            select MAX(id) from livraria''')
+            max_id = cursor.fetchone()[0]
+
+            if max_id is None:
+                cursor.execute('''
+                update SQLITE_SEQUENCE set seq = 0 where name = 'livraria' ''')
+            else:
+                cursor.execute('''
+                update SQLITE_SEQUENCE set seq = ? where name = 'livraria' ''', (max_id,))
             conn.commit()
 
         elif opcao == 5:
@@ -139,7 +156,8 @@ def menu():
 
             cursor.execute('''
             select * from livraria
-            where autor = ?''', (nome_autor,))
+            where autor = ?
+            ''', (nome_autor,))
 
             livros = cursor.fetchall()
 
@@ -156,14 +174,17 @@ def menu():
             df = pd.read_sql('select * from livraria', con=conn)
             df.to_csv(exports / 'livros_exportados.csv', index=False)
             df.to_html(exports / 'livros_exportados.html')
-            pdf.from_file(exports / 'livros_exportados.html', exports / 'livros_exportados.pdf')
 
         elif opcao == 7:
             #importar dados csv
             try:
                 nome_arquivo = input("Digite o nome do arquivo: ")
                 df = pd.read_csv(exports / f'{nome_arquivo}.csv')
-                df.to_sql('livraria', conn, if_exists='replace', columns=['titulo', 'autor', 'ano_publicacao', 'preco'])
+                colunas = ['titulo', 'autor', 'ano_publicacao', 'preco']
+                df = df[colunas]
+                df.to_sql('livraria', conn, if_exists='append', index=False)
+
+
                 print("dados importados com sucesso!")
             except FileNotFoundError:
                 print(f"Erro: o arquivo {nome_arquivo}.csv não foi encontrado.")
@@ -177,9 +198,16 @@ def menu():
             backup_tabela()
 
         elif opcao == 9:
+            os.makedirs(exports, exist_ok=True)
+            df = pd.read_sql('select * from livraria', con=conn)
+            df.to_html(exports / 'livros_exportados.html')
+            print("relatorio gerado com sucesso!")
+
+        elif opcao == 0:
             break
 
     conn.close()
 
 
-menu()
+if __name__ == '__main__':
+    menu()
